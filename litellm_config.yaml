@@ -1,0 +1,30 @@
+model_list:
+  - model_name: gpt-4o
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: "os.environ/OPENAI_API_KEY"
+  - model_name: claude-3-5-sonnet-20240620
+    litellm_params:
+      model: anthropic/claude-3-5-sonnet-20240620
+      api_key: "os.environ/ANTHROPIC_API_KEY"
+
+general_settings:
+  master_key: "sk-1234"
+  database_url: "postgresql://riturazzz:rituraj123@db:5432/litellm_db"
+  disable_spend_logs: false
+  database_connection_pool_limit: 10 # Limit DB connections
+  database_connection_timeout: 60 # DB connection timeout in seconds
+  store_model_in_db: true
+  store_prompts_in_spend_logs: true
+  json_logs: true
+
+litellm_settings:
+  drop_params: true
+  store_audit_logs: true
+  cache: true
+  set_verbose: True # dev mode
+  cache_params:
+    type: "redis"
+    host: "redis"
+    port: 6379
+    password: "rituraj123"
