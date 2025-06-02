@@ -1,0 +1,54 @@
+services:
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: litellm
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./litellm_config.yaml:/app/config.yaml
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    command:
+      - "--config"
+      - "/app/config.yaml"
+      - "--port"
+      - "8000"
+      - "--num_workers"
+      - "4"
+  db:
+    image: postgres:16-alpine
+    container_name: litellm-db
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: on-failure:5
+  redis:
+    image: redis:7-alpine
+    container_name: litellm-redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - ./redisdata:/data
+    command: redis-server --requirepass rituraj123
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "rituraj123", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+  redisdata:
